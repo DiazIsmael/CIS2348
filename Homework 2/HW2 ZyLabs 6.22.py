@@ -19,4 +19,4 @@ for x in range(-10, 11):
             print(xsolution, ysolution)
             exit()
 
-print("No Solution")
+print("No solution")
