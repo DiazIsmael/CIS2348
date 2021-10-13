@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
         if num_dimes > 1:
             print(num_dimes, "dimes")
-        elif num_dimes== 1:
+        elif num_dimes == 1:
             print(num_dollars, "dime")
 
         if num_nickels > 1:
