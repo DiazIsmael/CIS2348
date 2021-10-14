@@ -6,11 +6,13 @@ months_dict = {"January": 1, "February": 2, "March": 3, "April": 4, "May": 5, "J
 todaysdate = date.today()
 userdate = date(1111, 11, 1)
 rawdate = ""
+inputFile = open("inputDates.txt", "r")
 
 while rawdate != "-1":
-    rawdate = input("Enter date in format \"March 1, 1990\": ")
+    rawdate = inputFile.readline()
 
-    x = rawdate.replace(",", "")
+    x = rawdate.replace("\n", "")
+    x = x.replace(",", "")
     x = x.split(" ")
 
     if x[0] in months_dict.keys() and 0 < int(x[1]) < 32 and len(x[2]) == 4:
@@ -19,3 +21,5 @@ while rawdate != "-1":
             print("{}/{}/{}".format(months_dict[x[0]], x[1], x[2]))
         else:
             pass
+
+inputFile.close()
