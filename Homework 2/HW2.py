@@ -6,7 +6,9 @@ months_dict = {"January": 1, "February": 2, "March": 3, "April": 4, "May": 5, "J
 todaysdate = date.today()
 userdate = date(1111, 11, 1)
 rawdate = ""
+
 inputFile = open("inputDates.txt", "r")
+outputFile = open("parsedDates.txt", "w")
 
 while rawdate != "-1":
     rawdate = inputFile.readline()
@@ -19,8 +21,9 @@ while rawdate != "-1":
         userdate = date(int(x[2]), int(months_dict[x[0]]), int(x[1]))
         if userdate < todaysdate:
             print("{}/{}/{}".format(months_dict[x[0]], x[1], x[2]))
+            outputFile.write("{}/{}/{}\n".format(months_dict[x[0]], x[1], x[2]))
         else:
             pass
 
-
 inputFile.close()
+outputFile.close()
