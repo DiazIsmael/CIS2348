@@ -22,4 +22,5 @@ while rawdate != "-1":
         else:
             pass
 
+
 inputFile.close()
