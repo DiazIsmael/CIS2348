@@ -6,9 +6,9 @@ import csv
 from fileinput import close
 
 inventory = []
-todaysdate = date.today()
+today = date.today()
 
-#populating the master inventory
+# populating the master inventory
 inputFile = open('ManufacturerList.csv')
 reader = csv.reader(inputFile)
 
@@ -19,7 +19,7 @@ for items in reader:
 
 inputFile.close()
 
-#importing prices and appending to inventory
+# importing prices and appending to inventory
 inputFile = open('PriceList.csv')
 reader = csv.reader(inputFile)
 
@@ -32,7 +32,7 @@ for prices in reader:
 
 inputFile.close()
 
-#importing service dates and appending to inventory
+# importing service dates and appending to inventory
 inputFile = open('ServiceDatesList.csv')
 reader = csv.reader(inputFile)
 
@@ -45,20 +45,18 @@ for dates in reader:
 
 inputFile.close()
 
-#appending damaged attribute to the end of list for correct csv writing order
+# appending damaged attribute to the end of list for correct csv writing order
 inputFile = open('ManufacturerList.csv')
 reader = csv.reader(inputFile)
 
 for damaged in reader:
     for list in inventory:
-        i = 0
         if damaged[0] == list[0]:
             list.append(damaged[3])
-        i += 1
 
 inputFile.close()
 
-#sorting and writing to fullinventory.csv
+# sorting and writing to fullInventory.csv
 outputFile = open('FullInventory.csv', 'w', newline='')
 writer = csv.writer(outputFile)
 
@@ -67,22 +65,27 @@ writer.writerows(alphaInventory)
 
 outputFile.close()
 
-'''
-for list in sortedList:
-    for key in inventory.keys():
-        if inventory[key] == list:
-            sortedInventory[key] = inventory[key]
+# sorting and writing item type inventory list to [itemtype]Inventory.csv
+itemTypes = []
+alphaInventory = sorted(inventory, key=lambda x: x[0])
+itemInventory = []
 
-writer.writerow(sortedInventory.items())
-print(sortedInventory)
+for index in range(len(alphaInventory)):
+    itemInventory.append([alphaInventory[index][0], alphaInventory[index][1], alphaInventory[index][3], alphaInventory[index][4], alphaInventory[index][5]])
 
-"""outputList = []
+i = 0
+for list in alphaInventory:
+    itemTypes.append(list[2])
+    filename = itemTypes[i] + 'Inventory.csv'
+    outputFile = open(filename, 'w', newline='')
+    writer = csv.writer(outputFile)
 
-for keys in sortedInventory.keys():
-    outputList.append(keys)
-    for values in sortedInventory.values():
-        outputList.append(sortedInventory[keys])
+    for item in alphaInventory:
+        if list[2] == item[2]:
+            for a in range(len(alphaInventory)):
+                if item[0] == itemInventory[a][0]:
+                    writer.writerow(itemInventory[a])
 
-print(outputList)"""
+    i += 1
 
-'''
+# PART C
