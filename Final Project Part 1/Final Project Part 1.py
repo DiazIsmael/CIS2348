@@ -107,5 +107,20 @@ for list in sortedInventory:
         writer.writerow([inventory[i][0], inventory[i][1], inventory[i][2], inventory[i][3], date.strftime("%m/%d/%Y"), inventory[i][5]])
 
     i += 1
+outputFile.close()
 
 # sorting prices and writing to DamagedInventory.csv
+outputFile = open('DamagedInventory.csv', 'w', newline='')
+writer = csv.writer(outputFile)
+sortedInventory = []
+
+for list in inventory:
+    sortedInventory.append([list[0], list[1], list[2], int(list[3]), list[4], list[5]])
+
+sortedInventory = sorted(sortedInventory, key=lambda x: x[3], reverse=True)
+
+for list in sortedInventory:
+    if list[5] == '':
+        writer.writerow([list[0], list[1], list[2], list[3], list[4]])
+
+outputFile.close()
