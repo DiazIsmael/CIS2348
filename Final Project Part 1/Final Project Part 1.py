@@ -1,9 +1,7 @@
 #Ismael Diaz (PSID: 1846093)
 #CIS 2348 Final Project Pt. 1
-from datetime import date
-from datetime import datetime
+from datetime import date, datetime
 import csv
-from fileinput import close
 
 inventory = []
 today = date.today()
@@ -66,26 +64,48 @@ writer.writerows(alphaInventory)
 outputFile.close()
 
 # sorting and writing item type inventory list to [itemtype]Inventory.csv
-itemTypes = []
-alphaInventory = sorted(inventory, key=lambda x: x[0])
+sortedInventory = sorted(inventory, key=lambda x: x[0])
 itemInventory = []
+itemTypes = []
 
-for index in range(len(alphaInventory)):
-    itemInventory.append([alphaInventory[index][0], alphaInventory[index][1], alphaInventory[index][3], alphaInventory[index][4], alphaInventory[index][5]])
+for index in range(len(sortedInventory)):
+    itemInventory.append([sortedInventory[index][0], sortedInventory[index][1], sortedInventory[index][3], sortedInventory[index][4], sortedInventory[index][5]])
 
 i = 0
-for list in alphaInventory:
+for list in sortedInventory:
     itemTypes.append(list[2])
     filename = itemTypes[i] + 'Inventory.csv'
     outputFile = open(filename, 'w', newline='')
     writer = csv.writer(outputFile)
 
-    for item in alphaInventory:
+    for item in sortedInventory:
         if list[2] == item[2]:
-            for a in range(len(alphaInventory)):
+            for a in range(len(sortedInventory)):
                 if item[0] == itemInventory[a][0]:
                     writer.writerow(itemInventory[a])
 
+    outputFile.close()
     i += 1
 
-# PART C
+# sorting dates and writing to PastServiceDateInventory.csv
+outputFile = open("PastServiceDateInventory.csv", 'w', newline='')
+writer = csv.writer(outputFile)
+sortedInventory = []
+
+i = 0
+for list in inventory:
+    dateobject = datetime.strptime(inventory[i][4], "%m/%d/%Y").date()
+    sortedInventory.append([inventory[i][0], inventory[i][1], inventory[i][2], inventory[i][3], dateobject, inventory[i][5]])
+    i += 1
+
+sortedInventory = sorted(sortedInventory, key=lambda x: x[4])
+
+i = 0
+for list in sortedInventory:
+    if list[4] < today:
+        date = list[4]
+        writer.writerow([inventory[i][0], inventory[i][1], inventory[i][2], inventory[i][3], date.strftime("%m/%d/%Y"), inventory[i][5]])
+
+    i += 1
+
+# sorting prices and writing to DamagedInventory.csv
