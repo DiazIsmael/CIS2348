@@ -1,5 +1,5 @@
 #Ismael Diaz (PSID: 1846093)
-#CIS 2348 Homework #3 Zylabs 10.11
+#CIS 2348 Homework #3 Zylabs 10.15
 
 class Team:
     def __init__(self):
