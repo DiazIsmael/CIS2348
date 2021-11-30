@@ -1,7 +1,7 @@
 # Ismael Diaz (PSID: 1846093)
 # CIS 2348 Homework #4 ZyLabs 12.7
 
-def fat_burning_heart_rate():
+def fat_burning_heart_rate(age):
     heartrate = (220-age) * .70
     return heartrate
 
@@ -19,6 +19,6 @@ if __name__ == "__main__":
         age = get_age()
     except ValueError as error:
         print(error)
-        print("Could not calculate heart rate info.")
+        print("Could not calculate heart rate info.\n")
     else:
-        print("Fat burning heart rate for a {} year-old: {:.1f} bpm".format(age, fat_burning_heart_rate()))
+        print("Fat burning heart rate for a {} year-old: {:.1f} bpm".format(age, fat_burning_heart_rate(age)))
