@@ -1,5 +1,5 @@
-#Ismael Diaz (PSID: 1846093)
-#CIS 2348 Final Project Pt. 2
+# Ismael Diaz (PSID: 1846093)
+# CIS 2348 Final Project Pt. 2
 from datetime import date, datetime
 import csv
 
@@ -13,7 +13,6 @@ reader = csv.reader(inputFile)
 for line in reader:
     i = 0
     inventory.insert(i, [line[0], line[1], line[2]])
-
     i += 1
 
 inputFile.close()
@@ -23,10 +22,10 @@ inputFile = open('PriceList.csv')
 reader = csv.reader(inputFile)
 
 for prices in reader:
-    for list in inventory:
+    for item in inventory:
         i = 0
-        if prices[0] == list[0]:
-            list.append(prices[1])
+        if prices[0] == item[0]:
+            item.append(prices[1])
         i += 1
 
 inputFile.close()
@@ -36,10 +35,10 @@ inputFile = open('ServiceDatesList.csv')
 reader = csv.reader(inputFile)
 
 for dates in reader:
-    for list in inventory:
+    for item in inventory:
         i = 0
-        if dates[0] == list[0]:
-            list.append(dates[1])
+        if dates[0] == item[0]:
+            item.append(dates[1])
         i += 1
 
 inputFile.close()
@@ -49,103 +48,78 @@ inputFile = open('ManufacturerList.csv')
 reader = csv.reader(inputFile)
 
 for damaged in reader:
-    for list in inventory:
-        if damaged[0] == list[0]:
-            list.append(damaged[3])
+    for item in inventory:
+        if damaged[0] == item[0]:
+            item.append(damaged[3])
 
 inputFile.close()
 
-# sorting inventory alphabetically by manufacturer & querying user for their chosen item
-alphaInventory = sorted(inventory, key=lambda x: x[1])
+# sorting inventory by price, creating manufacturer and item type sets & querying user for their chosen item
+inventory = sorted(inventory, key=lambda x: x[3])
+manufacturerSet = {}
+typeSet = {}
+manuList = []
+typeList = []
 
-userChoice = input("What is the Manufacturer and Item Type that you're looking for?:\n")
+for item in inventory:
+    manuList.append(item[1])
+    typeList.append(item[2])
 
-# Validating user input
-userChoice = userChoice.split()
+manufacturerSet = set(manuList)
+typeSet = set(typeList)
+
+userInput = input("What is the Manufacturer and Item Type that you're looking for?:\n")
 userItems = []
 
-while userChoice != "q":
-    userChoice = input("What is the Manufacturer and Item Type that you're looking for?:\n")
+# Interactive Inventory Query loop
+while userInput != "q":
+    userInput = userInput.split()
+    manufacturerCount = 0
+    typeCount = 0
+    userItems = []
+    itemType = ""
+    itemManufacturer = ""
 
-    for item in alphaInventory:
-        manufacturerCount = 0
-        typeCount = 0
-        userManu = ""
-        userType = ""
-
-        if item[1] in userChoice and item[2] in userChoice:
-            userItems.append(item)
-            userManu = item[1]
-            userType = item[2]
-
+    # used for later input validation
+    for word in userInput:
+        if word in manufacturerSet:
             manufacturerCount += 1
-            print(userItems)
-        else:
-            print("No such item in inventory")
-            break
+    for word in userInput:
+        if word in typeSet:
+            typeCount += 1
 
-print(userItems)
+    # Validating user input and Gathering user desired item
+    if manufacturerCount == 1 and typeCount == 1:
+        for item in inventory:
+            if item[1] in userInput and item[2] in userInput and item[5] != "damaged":
+                serviceDate = datetime.strptime(item[4], "%m/%d/%Y").date()
+                itemManufacturer = item[1]
+                itemType = item[2]
+                if serviceDate > today:
+                    userItems.append(item)
+    else:
+        print("No such item in inventory.")
+        userInput = input("What is the Manufacturer and Item Type that you're looking for?:\n")
+        continue
 
-'''
-# sorting and writing item type inventory list to [itemtype]Inventory.csv
-sortedInventory = sorted(inventory, key=lambda x: x[0])
-itemInventory = []
-itemTypes = []
+    # Outputting user desired item(s)
+    try:
+        if manufacturerCount == 1 and typeCount == 1:
+            print("Your item is: {}, {}, {}, ${}".format(userItems[0][0], userItems[0][1], userItems[0][2], userItems[0][3]))
+    except:
+        print("No such item in inventory.")
+        userInput = input("What is the Manufacturer and Item Type that you're looking for?:\n")
+        continue
 
-for index in range(len(sortedInventory)):
-    itemInventory.append([sortedInventory[index][0], sortedInventory[index][1], sortedInventory[index][3], sortedInventory[index][4], sortedInventory[index][5]])
+    # Outputting & validating possible alternative item
+    if manufacturerCount == 1 and typeCount == 1:
+        for item in inventory:
+            if item[1] != itemManufacturer and item[2] == itemType and item[5] != "damaged":
+                serviceDate = datetime.strptime(item[4], "%m/%d/%Y").date()
+                if serviceDate > today:
+                    userItems.append(item)
 
-i = 0
-for list in sortedInventory:
-    itemTypes.append(list[2])
-    filename = itemTypes[i] + 'Inventory.csv'
-    outputFile = open(filename, 'w', newline='')
-    writer = csv.writer(outputFile)
+                    print("You may, also, consider: {}, {}, {}, ${}".format(userItems[1][0], userItems[1][1], userItems[1][2], userItems[1][3]))
+                    break
 
-    for item in sortedInventory:
-        if list[2] == item[2]:
-            for a in range(len(sortedInventory)):
-                if item[0] == itemInventory[a][0]:
-                    writer.writerow(itemInventory[a])
-
-    outputFile.close()
-    i += 1
-
-# sorting dates and writing to PastServiceDateInventory.csv
-outputFile = open("PastServiceDateInventory.csv", 'w', newline='')
-writer = csv.writer(outputFile)
-sortedInventory = []
-
-i = 0
-for list in inventory:
-    dateobject = datetime.strptime(inventory[i][4], "%m/%d/%Y").date()
-    sortedInventory.append([inventory[i][0], inventory[i][1], inventory[i][2], inventory[i][3], dateobject, inventory[i][5]])
-    i += 1
-
-sortedInventory = sorted(sortedInventory, key=lambda x: x[4])
-
-i = 0
-for list in sortedInventory:
-    if list[4] < today:
-        date = list[4]
-        writer.writerow([inventory[i][0], inventory[i][1], inventory[i][2], inventory[i][3], date.strftime("%m/%d/%Y"), inventory[i][5]])
-
-    i += 1
-outputFile.close()
-
-# sorting prices and writing to DamagedInventory.csv
-outputFile = open('DamagedInventory.csv', 'w', newline='')
-writer = csv.writer(outputFile)
-sortedInventory = []
-
-for list in inventory:
-    sortedInventory.append([list[0], list[1], list[2], int(list[3]), list[4], list[5]])
-
-sortedInventory = sorted(sortedInventory, key=lambda x: x[3], reverse=True)
-
-for list in sortedInventory:
-    if list[5] == '':
-        writer.writerow([list[0], list[1], list[2], list[3], list[4]])
-
-outputFile.close()'''
-
+    userInput = input("What is the Manufacturer and Item Type that you're looking for?:\n")
